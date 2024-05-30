@@ -8,7 +8,8 @@ import plotly.graph_objects as go
 st.set_page_config(page_title='Player DashBoard',page_icon=':soccer:',
                      layout="wide")
 
-st.title('Dashboard on the players:soccer:')
+st.title('Dashboard of players:soccer:')
+st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
 st.sidebar.title('Player selection')
 # Load data from Excel file
 excel_file = 'Player Data1.xlsx'
@@ -167,10 +168,12 @@ c12.metric(t_c12,t_v12)
 col3, col4 = st.columns(2)
 df1=sp_details.iloc[:,1:8]
 with col3:
+    st.subheader('Chart-1)
     radar_fig1 = radar_chart1(df1)
     st.plotly_chart(radar_fig1)
     
 with col4:
+    st.subheader('Chart-2')
     df=sp_details.iloc[:,8:18]
     radar_fig1 = radar_chart1(df)
     st.plotly_chart(radar_fig1)
@@ -179,11 +182,13 @@ with col4:
 col5, col6= st.columns(2)
 
 with col5:
+     st.subheader('Chart-3')
     df=sp_details.iloc[:,18:25]
     radar_fig1 = radar_chart1(df)
     st.plotly_chart(radar_fig1)
     
 with col6:
+     st.subheader('Chart-4')
     df1=sp_details.iloc[:,25:]
     l=list(sp_details.iloc[:,0])
     df1.insert(loc=0,column='Players',value=l)
