@@ -168,7 +168,7 @@ c12.metric(t_c12,t_v12)
 col3, col4 = st.columns(2)
 df1=sp_details.iloc[:,1:8]
 with col3:
-    st.subheader('Chart-1)
+    st.subheader('Chart-1')
     radar_fig1 = radar_chart1(df1)
     st.plotly_chart(radar_fig1)
     
