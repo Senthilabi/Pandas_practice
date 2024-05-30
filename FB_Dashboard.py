@@ -182,13 +182,13 @@ with col4:
 col5, col6= st.columns(2)
 
 with col5:
-     st.subheader('Chart-3')
+    st.subheader('Chart-3')
     df=sp_details.iloc[:,18:25]
     radar_fig1 = radar_chart1(df)
     st.plotly_chart(radar_fig1)
     
 with col6:
-     st.subheader('Chart-4')
+    st.subheader('Chart-4')
     df1=sp_details.iloc[:,25:]
     l=list(sp_details.iloc[:,0])
     df1.insert(loc=0,column='Players',value=l)
