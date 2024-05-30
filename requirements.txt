@@ -1,6 +1,5 @@
-pandas
-numpy
-matplotlib
-plotly.express
-plotly.graph_objects
-streamlit
+pandas==2.2.2
+numpy==1.26.4
+matplotlib==3.9.0
+plotly==5.13.1  # Use the latest version available or the version you need
+
