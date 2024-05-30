@@ -11,7 +11,7 @@ st.set_page_config(page_title='Player DashBoard',page_icon=':soccer:',
 st.title('Dashboard on the players:soccer:')
 st.sidebar.title('Player selection')
 # Load data from Excel file
-excel_file = 'Player Data.xlsx'
+excel_file = 'Player Data1.xlsx'
 xl=pd.ExcelFile(excel_file)
 xlsheets=xl.sheet_names
 #xlsheets
