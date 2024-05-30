@@ -1,2 +1,2 @@
-# Pandas_practice
+# FB Dashboard
 Complete Pandas exercise 
