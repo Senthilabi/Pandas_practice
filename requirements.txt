@@ -4,4 +4,4 @@ numpy==1.26.4
 matplotlib==3.9.0
 plotly==5.13.1  # Use the latest version available or the version you need
 streamlit_aggrid
-PIL
+
