@@ -17,6 +17,29 @@ st.set_page_config(page_title='Player DashBoard',page_icon=':soccer:',
 
 
 #Loading the dataset
+#import base64
+
+#@st.cache_data()
+#def get_base64_of_bin_file(bin_file):
+#    with open(bin_file, 'rb') as f:
+#        data = f.read()
+#    return base64.b64encode(data).decode()
+
+#def set_png_as_page_bg(png_file):
+#    bin_str = get_base64_of_bin_file(png_file)
+#   page_bg_img = '''
+#    <style>
+#    body {
+#    background-image: url("data:image/png;base64,%s");
+#    background-size: cover;
+#    }
+#    </style>
+#    ''' % bin_str
+#    #st.write('Hello inside ')
+#    st.markdown(page_bg_img, unsafe_allow_html=True)
+#    return
+#bgfile='player_images/Bruma.png'
+#set_png_as_page_bg(bgfile)
 
 @st.cache_resource
 def data_load ( filename):
@@ -71,11 +94,15 @@ def radar_chart1(df2):
           name=df2.iloc[i,0]
     ))
     fig.update_layout(
+      height=500,
+      width=500,
       polar=dict(
         radialaxis=dict(
           visible=True,
           range=[0, 100]
-        )),
+        ),
+      ),
+      
       showlegend=False
     )
 
@@ -161,6 +188,7 @@ except:
     pass
 #selplayers.append(selp2)
 
+st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
 sp_details=df[df['Player'].isin(selplayers)]
 #text area starts here
 tdf=text_area_data
@@ -173,7 +201,8 @@ t5='TSP Score'
 t6=middf[middf['Player']==selplayers[0]].iloc[0,5]
 #st.write(t6)
 #top_row=['t'+str(i) for i in range(1,6)]
-top_row=[t1,t2,t3,t4,t5,t6]
+#top_row=[t1,t2,t3,t4,t5,t6]
+top_row=[t1,t2,t3,t4]
 
 second_row=tdf['Primary Attributes'].tolist()
 second_row.insert(0,tdf.columns[2])
@@ -201,8 +230,9 @@ for student_values in values:
 
 # Define colors for each attribute
 #colors = ['#636EFA', '#EF553B', '#00CC96','#112277','#225577','#004488','#2266AA']
-colors=[['grey','white','grey','white','grey','white'],['blue','yellow','yellow','yellow','yellow','yellow','yellow'],
-        ['blue','yellow','yellow','yellow','yellow','yellow','yellow'],['grey','white','grey','white','grey','white']]
+colors=[['lightblue','white','lightblue','white','lightblue','white'],
+        ['black','darkorange','darkorange','darkorange','darkorange','darkorange','darkorange'],
+                    ['black','darkorange','darkorange','darkorange','darkorange','darkorange','darkorange'],   ['lightblue','white','lightblue','white','lightblue','white']]
 # Create the figure
 fig = go.Figure()
 
@@ -245,11 +275,30 @@ fig.update_yaxes(showline=False, showticklabels=False,linecolor='black')
 config ={'displayModeBar': False}
 
 # Display the chart
-col1 , col2 =st.columns([2,1])
+col1 ,col2, col3 =st.columns([3,1,1])
 with col1:
        st.plotly_chart(fig)
 
 with col2:
+    if selplayers[0]=='Ideal Left Winger':
+        for i in range(6):
+            st.write(' ')
+        st.image('player_images/SmartScoutlogo.png',width=150)
+        
+    else:      
+        pl_filename=selplayers[0].replace(' ','_')
+        player_img1='player_images/'+pl_filename+'.png'
+        #player_img='player_images/Andreas_S_Olsen.png'
+        #st.write(player_img)
+        #st.write(player_img1)
+        #from PIL import Image
+        #input_image = Image.open(player_img1)
+        #st.image(input_image,width=200)
+        #st.image('player_images/Antonia_Nusa.png',width=200)
+        st.image(player_img1,width=200)
+    
+        st.subheader(selplayers[0])
+with col3:
     fig2=gauge(t6)
     st.plotly_chart(fig2)
 
@@ -294,7 +343,7 @@ with col6:
     df1.insert(loc=0,column='Players',value=l)
     exp=st.expander(label='Chart 4  click here',expanded=False)
     #df=sp_details.iloc[:,8:18]
-    #radar_fig1 = radar_chart1(df)
+    radar_fig1 = radar_chart1(df1)
     exp.plotly_chart(radar_fig1)
     #radar_fig1 = radar_chart1(df1)
     #st.plotly_chart(radar_fig1)
