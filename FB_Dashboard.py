@@ -9,7 +9,10 @@ st.set_page_config(page_title='Player DashBoard',page_icon=':soccer:',
                      layout="wide")
 
 st.title('Dashboard of players:soccer:')
-st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
+st.divider(-)
+st.write(____________)
+st.markdown('<style>div.block-container{padding-top:1rem;}</style>', unsafe_allow_html=True)
+
 st.sidebar.title('Player selection')
 # Load data from Excel file
 excel_file = 'Player Data1.xlsx'
