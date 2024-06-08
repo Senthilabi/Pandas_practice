@@ -47,6 +47,14 @@ sp_details=df[(df['Player']==selected_player)|
 #ip_details=df[df['Player']=='Ideal Left Winger']
 sp_details.drop('TSP Score',axis=1,inplace=True)
 #ip_details
+
+file2='Data_Dashboard_Extended'
+xl2= data_load(file2)
+xl2sheet=xl2.sheet_names()
+Techdf=pd.read_excel(file2,sheet_name=xl2sheet[0])
+Tactdf=pd.read_excel(file2,sheet_name=xl2sheet[1])
+st.write(techdf.shape)
+st.write(tactdf.shape)
 def radar_chart1(df2):
 
     categories=list(df2.columns[1:])

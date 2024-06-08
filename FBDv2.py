@@ -72,11 +72,28 @@ col=df.columns
 df[col[1:]]=df[col[1:]].round(2)
 df.sort_values(by=['TSP Score'],inplace=True,ascending=False)
 df=df.reset_index(drop=True)
+#st.write(df.columns)
 #st.table(df)
 player_list=df['Player'].to_list()
+ 
+file2='Data_Dashboard_Extended.xlsx'
+#"C:\Users\senth\Documents\GitHub\Pandas_practice\Data_Dashboard_Extended.xlsx"
+xl2=data_load(file2)
+xl2sheets=xl2.sheet_names
+techdf=pd.read_excel(file2,sheet_name=xl2sheets[0],
+                    header=[0,1])
+tactdf=pd.read_excel(file2,sheet_name=xl2sheets[1],
+                    header=[0,1])
+techcol=techdf.columns.get_level_values
+c=tactdf.columns.get_level_values(1)
+techdf.set_index('Unnamed: 0_level_0', inplace=True)
 
+techdf.index=techdf.index.map(lambda x :  x[0])
 
+tactdf.set_index('Unnamed: 0_level_0', inplace=True)
 
+tactdf.index=tactdf.index.map(lambda x :  x[0])
+#st.write(tactdf.index)
 #code for radar chart
 
 def radar_chart1(df2):
@@ -84,7 +101,7 @@ def radar_chart1(df2):
     categories=list(df2.columns[1:])
 
     fig = go.Figure()
-
+    config ={'scrollzoom': True}
 
     for i in range(df2.shape[0]):
         fig.add_trace(go.Scatterpolar(
@@ -158,6 +175,18 @@ def gauge(circle_score):
     width=800,
     height=300)
     return fig_circle
+def bar_chart(series,name):
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        y=series.index,
+        x=list(series),
+        name=name,
+        orientation='h',
+
+    ))
+    fig.update_layout(barmode='stack')
+    return fig
+
 
 middf=Mid_text_area_data
 middf['Contract']=middf['Contract'].astype(str)
@@ -205,10 +234,10 @@ t6=middf[middf['Player']==selplayers[0]].iloc[0,5]
 top_row=[t1,t2,t3,t4]
 
 second_row=tdf['Primary Attributes'].tolist()
-second_row.insert(0,tdf.columns[2])
+second_row.insert(0,tdf.columns[2].split()[0])
 
 third_row=tdf[tdf.columns[3]].tolist()
-third_row.insert(0,tdf.columns[3])
+third_row.insert(0,tdf.columns[3].split()[0])
 for i in range(4,7):
     third_row[i]=''
 
@@ -235,7 +264,8 @@ colors=[['lightblue','white','lightblue','white','lightblue','white'],
                     ['black','darkorange','darkorange','darkorange','darkorange','darkorange','darkorange'],   ['lightblue','white','lightblue','white','lightblue','white']]
 # Create the figure
 fig = go.Figure()
-
+config ={'displayModeBar': False}
+config ={'staticplot': True}
 # Add the bar trace for each student
 for i, bar_values in zip(range(4), normalized_values):
     
@@ -263,28 +293,31 @@ fig.update_layout(
             'family': "Courier New, monospace",
             'size': 30,
             'color': "RebeccaPurple"}
+    
     },
     #xaxis_title='Percentage',
     #yaxis_title='',
     barmode='stack',
     xaxis=dict(range=[0, 100]),  # Ensure the x-axis ranges from 0 to 100
-    showlegend=False
+    showlegend=False,
+    
 )
 fig.update_xaxes(showticklabels=False,linecolor='white')
 fig.update_yaxes(showline=False, showticklabels=False,linecolor='black')
 config ={'displayModeBar': False}
 
 # Display the chart
-col1 ,col2, col3 =st.columns([3,1,1])
+st1=st.expander(label='',expanded=True)
+col1 ,col2, col3 =st1.columns([3,1,1])
 with col1:
-       st.plotly_chart(fig)
+       st.plotly_chart(fig,config=config)
 
 with col2:
     if selplayers[0]=='Ideal Left Winger':
         for i in range(6):
             st.write(' ')
         st.image('player_images/SmartScoutlogo.png',width=150)
-        
+
     else:      
         pl_filename=selplayers[0].replace(' ','_')
         player_img1='player_images/'+pl_filename+'.png'
@@ -296,7 +329,7 @@ with col2:
         #st.image(input_image,width=200)
         #st.image('player_images/Antonia_Nusa.png',width=200)
         st.image(player_img1,width=200)
-    
+
         st.subheader(selplayers[0])
 with col3:
     fig2=gauge(t6)
@@ -307,16 +340,39 @@ df1=sp_details.iloc[:,1:8]
 with col3:
     #st.subheader('Chart-1')
     radar_fig1 = radar_chart1(df1)
-    exp=st.expander(label='Chart 1  click here',expanded=False)
-    exp.plotly_chart(radar_fig1)
+    exp=st.expander(label='Overall Attributes',expanded=False)
+    config ={'displaymode': False}
+    exp.plotly_chart(radar_fig1,config=config)
+    
+    
     
 with col4:
     #st.subheader('Chart-2')
-    exp=st.expander(label='Chart 2  click here',expanded=False)
-    df=sp_details.iloc[:,8:18]
+    exp=st.expander(label='Overall Technical',expanded=False)
+    df=sp_details.iloc[:,8:17]
+    df.columns=df.columns.str.title()
+    radio_options=list(df.columns)
+    #radio_options=[x[:5] for x in radio_options]
+    #radio_options=[x.title() for x in radio_options]
     radar_fig1 = radar_chart1(df)
-    exp.plotly_chart(radar_fig1)
-
+    exp.plotly_chart(radar_fig1,config=config)
+    if not selplayers[0]=='Ideal Left Winger' :
+        func1=exp.radio(label='a', options=radio_options,
+                label_visibility='hidden',
+                horizontal=True,
+                index=None )
+        if func1 in radio_options :
+            #st.write(func1)
+            #st.write(selplayers[0])
+            #st.write(techdf.loc[selplayers[0]],[func1])
+            #st.write(techdf)
+            
+            bar_data=techdf.loc[selplayers[0]][func1]
+            #st.write(bar_data)
+            exp2=st.expander(label='Bar chart',expanded=True)
+            exp2.plotly_chart(bar_chart((bar_data),func1))
+        else:
+            pass
 #middle table
 
 #dfsel=mid_table['selected_rows']
@@ -324,27 +380,47 @@ with col4:
 # Second Row
 # Third Row
 middf['TSP Score']=middf['TSP Score'].astype(str)
-st.table(middf.iloc[0:5])
+#st.table(middf.iloc[0:5])
+midtab=middf
+midtab.set_index('Player',inplace =True)
+st.table(midtab.iloc[0:5])
 col5, col6= st.columns(2)
 
 with col5:
     #st.subheader('Chart-3')
-    df=sp_details.iloc[:,18:25]
+    df=sp_details.iloc[:,17:25]
+    radio2_options=list(df.columns)[1:]
+    #radio2_options=[x[:4] for x in radio2_options]
     #radar_fig1 = radar_chart1(df)
     #st.plotly_chart(radar_fig1)
-    exp=st.expander(label='Chart 3  click here',expanded=False)
-    #df=sp_details.iloc[:,8:18]
+    exp=st.expander(label='Overall Tactical',expanded=False)
     radar_fig1 = radar_chart1(df)
     exp.plotly_chart(radar_fig1)
+    
+    if not selplayers[0]=='Ideal Left Winger' :
+        func2=exp.radio(label='a', options=radio2_options,
+                label_visibility='hidden',
+                horizontal=True,
+                index=None )
+        if func2 in radio2_options :
+            #st.write(func1)
+            #st.write(selplayers[0])
+            #st.write(techdf.loc[selplayers[0]],[func1])
+            #st.write(techdf)
+            
+                
+            bar_data=tactdf.loc[selplayers[0]][func2]
+            #st.write(bar_data)
+            exp2=st.expander(label='Bar chart',expanded=True)
+            exp2.plotly_chart(bar_chart((bar_data),func2))
+        else:
+            pass          
 with col6:
     #st.subheader('Chart-4')
     df1=sp_details.iloc[:,25:]
     l=list(sp_details.iloc[:,0])
     df1.insert(loc=0,column='Players',value=l)
-    exp=st.expander(label='Chart 4  click here',expanded=False)
-    #df=sp_details.iloc[:,8:18]
+    exp=st.expander(label='Overall Psychological',expanded=False)
     radar_fig1 = radar_chart1(df1)
     exp.plotly_chart(radar_fig1)
-    #radar_fig1 = radar_chart1(df1)
-    #st.plotly_chart(radar_fig1)
 
