@@ -322,7 +322,7 @@ for value in values:
 colors=[['lightblue','white','lightblue','white'],
         ['lightblue','white','white','white','white','white','white'],
         ['lightblue','white','white','white','white','white','white','white'],
-        ['lightblue','white','white','white','white','white','white'],   
+        ['lightblue','white','lightblue','white','white','white','white'],   
         ['lightblue','white']]#,'lightblue','white']]
 # Create the figure
 fig = go.Figure()
