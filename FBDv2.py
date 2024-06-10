@@ -25,6 +25,8 @@ def data_load ( filename):
 #Data sources
 #Absolute path
 #"C:\Users\senth\Documents\GitHub\Pandas_practice\Data_Dashboard_Extended.xlsx"
+
+
 # Player data
 excel_file='Player Data2.xlsx'
 # Extended data list for subbar graphs
@@ -157,13 +159,17 @@ def bar_chart(series,name):
         text=list(series),
         textposition='inside',textangle=0,
         insidetextanchor='middle',
-        textfont={'size':20},
+        textfont={'size':400},
 
     ))
     fig.update_layout(
         barmode='stack',
-        height=600,)
+        width=1200,
+        height=1200, ) #[lambda x:1800 if len(x) > 10 else 600],)
+        
+    
         #text=list(series))
+    
     return fig
 
 def comparison_bar_chart(series1, series2, name1,name2):
@@ -179,7 +185,7 @@ def comparison_bar_chart(series1, series2, name1,name2):
         textposition='inside',
         textangle=0,
         insidetextanchor='middle',
-        textfont={'size': 20},
+        textfont={'size': 30},
         marker=dict(color='blue')  # Color for the first player
     ))
 
@@ -193,13 +199,14 @@ def comparison_bar_chart(series1, series2, name1,name2):
         textposition='inside',
         textangle=0,
         insidetextanchor='middle',
-        textfont={'size': 20},
+        textfont={'size': 30},
         marker=dict(color='orange')  # Color for the second player
     ))
 
     fig.update_layout(
         barmode='group',  # Use 'group' mode to place bars side-by-side
-        height=600,
+        height=1200,
+        #height=lambda x:1800 if len(list(series2)) > 10 else 600,
         title='Player Comparison',
         xaxis=dict(title='Value'),
         yaxis=dict(title='Attributes')
