@@ -449,7 +449,16 @@ midtab['TSP Score']=psdf['TSP Score'].round().astype(int)
 #to remove the decimal values in string
 midtab['Age']=midtab['Age'].apply(lambda x: x.split('.')[0])
 
-st.table(midtab.iloc[0:5])
+st.write(midtab.iloc[0:5],width=1)
+#styled_df=midtab.iloc[0:5].style.set_table_styles(
+#    [{'selector': 'th', 'props': [('background-color', 'lightgrey')]},
+#    {'selector': 'table', 'props': [('width', '200%')]}]
+ #   )
+
+#html = styled_df.to_html()
+
+# Display the styled DataFrame using st.write
+#st.write(html, unsafe_allow_html=True)
 col5, col6= st.columns(2)
 
 with col5:
@@ -473,12 +482,11 @@ if not selplayers[0]=='Ideal Left Winger' :
             horizontal=True,
             index=None )
     if func2 in radio2_options :
-        #st.write(func1)
-        #st.write(selplayers[0])
-        #st.write(techdf.loc[selplayers[0]],[func1])
-        #st.write(techdf)
-        series1=tactdf.loc[selplayers[0]][func2]
-        series2=tactdf.loc['Jack Clarke'][func2]
+        
+        if func2=='Team-Work':
+            func2='Team-Work '
+        series1=tactdf.loc[selplayers[0]][func2].round(2)
+        series2=tactdf.loc['Jack Clarke'][func2].round(2)
             
         #bar_data=tactdf.loc[selplayers[0]][func2]
         #st.write(bar_data)
@@ -497,49 +505,4 @@ with col6:
     exp.plotly_chart(radar_fig1)
     
 
-
-"""
-
-def comparison_bar_chart(series1, series2, name1,name2):
-    fig = go.Figure()
-
-    # Add trace for the first player
-    fig.add_trace(go.Bar(
-        y=series1.index,
-        x=list(series1),
-        name=name1,
-        orientation='h',
-        text=list(series1),
-        textposition='inside',
-        textangle=0,
-        insidetextanchor='middle',
-        textfont={'size': 20},
-        marker=dict(color='blue')  # Color for the first player
-    ))
-
-    # Add trace for the second player
-    fig.add_trace(go.Bar(
-        y=series2.index,
-        x=list(series2),
-        name=name2,
-        orientation='h',
-        text=list(series2),
-        textposition='inside',
-        textangle=0,
-        insidetextanchor='middle',
-        textfont={'size': 20},
-        marker=dict(color='orange')  # Color for the second player
-    ))
-
-    fig.update_layout(
-        barmode='group',  # Use 'group' mode to place bars side-by-side
-        height=600,
-        title='Player Comparison',
-        xaxis=dict(title='Value'),
-        yaxis=dict(title='Attributes')
-    )
-
-    return fig
-
-"""
 
