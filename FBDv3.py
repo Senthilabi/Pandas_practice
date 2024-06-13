@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #version 2 of the dashboard design with the inputs 8 th June
+=======
+#version 3 of the dashboard design with the inputs 13 th June
+>>>>>>> ceafb1c76c7c9119434cefccc856172c3abf94cf
 #importing necesary libraires
 
 import streamlit as st 
@@ -661,5 +665,11 @@ with col6:
     exp.plotly_chart(radar_fig1)
     
 #df=tactdf[func2]
+<<<<<<< HEAD
 
 #
+=======
+
+#
+
+>>>>>>> ceafb1c76c7c9119434cefccc856172c3abf94cf
