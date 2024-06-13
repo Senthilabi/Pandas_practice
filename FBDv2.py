@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go 
 import plotly.express as px 
-from st_aggrid import AgGrid ,GridUpdateMode
+from st_aggrid import AgGrid ,GridUpdateMode,JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder 
 
 #Setting the layout
@@ -236,10 +236,29 @@ psdf['Age']=psdf['Age'].astype(str)
 psdf1=psdf[['Player','TSP Score']]
 
 
+
+
+
+
 # code for AG grid display
+
+js_code = """
+function(e) {
+    const api = e.api;
+    const selectedRows = api.getSelectedRows();
+    if (selectedRows.length > 5) {
+        const rowToDeselect = selectedRows[5];
+        api.deselectNode(api.getRowNode(rowToDeselect.id));
+        alert('You can select a maximum of 5 rows.');
+    }
+}
+"""
+
 gd=GridOptionsBuilder.from_dataframe(psdf1)
 gd.configure_pagination(enabled=False)
-gd.configure_selection(selection_mode='single',use_checkbox=True)
+gd.configure_selection(selection_mode='multiple',use_checkbox=True)
+
+gd.configure_grid_options(onSelectionChanged=js_code)
 
 # Default player in the list to show the score when the page loads
 selplayers= ['Ideal Left Winger']
@@ -250,25 +269,47 @@ selplayers= ['Ideal Left Winger']
 st.sidebar.image('player_images/club_logo.jpg',width=100)
 
 st.sidebar.title('Choose your player:soccer:')
-with st.sidebar:
+selplayers =st.sidebar.multiselect(label='Select players',
+            options=player_list[1:],label_visibility='hidden',
+            max_selections=5
+            )
+#"""
+#with st.sidebar:
+  
     
-    stable=AgGrid(psdf1.drop(9), gridOptions=gd.build(),
-                 update_mode=GridUpdateMode.SELECTION_CHANGED,
-                  height=300,
-                   )
+#   stable=AgGrid(psdf1.drop(9), gridOptions=gd.build(),
+#                update_mode=GridUpdateMode.SELECTION_CHANGED,
+#                 height=300,
+#                   )
 # try used to by pass if there is no selection
-try:
-    selp2=stable['selected_rows'].iloc[0,0]
-    selplayers.insert(0,selp2)
-except:
-    pass
-
+#st.write(stable['selected_rows'].shape)
+                
+#try:
+#    selp2=stable['selected_rows']
+    #s=list(selp2)
+    #s.extend(sleplayers)
+#    st.write(len(selp2))
+#    if len(selp2) > 5:
+#        selp2 = selp2[:5]
+        
+#    s = [row[0] for row in selp2]
+    # s.extend(selplayers)
+#    st.write(row)
+        
+    #st.sidebar.write(s)
+    #selplayers.insert(0,s)
+    #st.write(list(selplayers))
+    
+#except Exception as e:
+#    st.write("No selection or an error occurred: ", str(e))
+    
+#"""
 # Log of the firm
 st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
 
 # filtering the df with selected players
 sp_details=df[df['Player'].isin(selplayers)]
-
+st.write(sp_details)
 #text area starts here
 
 tdf=text_area_data
@@ -511,5 +552,4 @@ with col6:
     radar_fig1 = radar_chart1(df1)
     exp.plotly_chart(radar_fig1)
     
-
 
