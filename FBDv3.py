@@ -146,7 +146,9 @@ def gauge(circle_score,text):
     fig_circle = go.Figure(go.Indicator(
     mode="gauge+number",
     value=circle_score,
-    title={'text': text+" TSP ",},
+    #title={'text': text+" TSP ",},
+    #commented above code to remove the player name 
+     title={'text': " TSP ",},  
     gauge={
         'axis': {'range': [None, 100]},
         'bar': {'color': "black"},
@@ -293,7 +295,8 @@ def multiPle_bar_chart(df,player):
 
 
 
-
+# not using the below set of code from
+#{
 
 ##renaming the scores sheet for simplicity and extracting score of selected player
 dfcs=circle_score_data
@@ -338,26 +341,6 @@ gd.configure_selection(selection_mode='multiple',use_checkbox=True)
 
 gd.configure_grid_options(onSelectionChanged=js_code)
 
-# Default player in the list to show the score when the page loads
-selplayers= ['Ideal Left Winger']
-
-
-
-# Dashboard screen starts here
-#"C:\Users\senth\Documents\GitHub\Pandas_practice\player_images\Sunderland..png"
-cols1, cols2=st.sidebar.columns([2,2])
-with cols1:
-    st.sidebar.image('player_images/Sunderland..png',width=100)
-#with cols2:
-    #st.sidebar.image('player_images/SmartScoutlogo.png',width=100)
-st.sidebar.title('Choose your player  '+'   :soccer:')
-try:
-    selplayers =st.sidebar.multiselect(label='Select players',
-            options=player_list[1:],label_visibility='hidden',
-            max_selections=5
-            )
-except:
-    pass
 #"""
 #with st.sidebar:
   
@@ -388,6 +371,31 @@ except:
 #except Exception as e:
 #    st.write("No selection or an error occurred: ", str(e))
     
+
+
+#}
+#since we are not using AG grid 
+
+# Default player in the list to show the score when the page loads
+selplayers= ['Ideal Left Winger']
+
+
+
+# Dashboard screen starts here
+#"C:\Users\senth\Documents\GitHub\Pandas_practice\player_images\Sunderland..png"
+cols1, cols2=st.sidebar.columns([2,2])
+with cols1:
+    st.sidebar.image('player_images/Sunderland..png',width=100)
+#with cols2:
+    #st.sidebar.image('player_images/SmartScoutlogo.png',width=100)
+st.sidebar.title('Choose your player  '+'   :soccer:')
+try:
+    selplayers =st.sidebar.multiselect(label='Select players',
+            options=player_list[1:],label_visibility='hidden',
+            max_selections=5
+            )
+except:
+    pass
 #"""
 # Log of the firm
 st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
@@ -395,7 +403,7 @@ st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
 # filtering the df with selected players
 
 
-selplayers.append('Ideal Left Winger')
+#selplayers.append('Ideal Left Winger')
 
 sp_details=df[df['Player'].isin(selplayers)]
 #st.write(sp_details)
@@ -413,7 +421,7 @@ except:
     t4=selplayers[0]
 #t4=tdf.iloc[0,1]
 #t5='TSP Score'
-t6=psdf[psdf['Player']==selplayers[0]].iloc[0,5]
+#t6=psdf[psdf['Player']==selplayers[0]].iloc[0,5]
 #st.write(t6)
 #top_row=['t'+str(i) for i in range(1,6)]
 #top_row=[t1,t2,t3,t4,t5,t6]
