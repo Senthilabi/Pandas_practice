@@ -273,6 +273,9 @@ selplayers =st.sidebar.multiselect(label='Select players',
             options=player_list[1:],label_visibility='hidden',
             max_selections=5
             )
+selplayers.append('Ideal Left Winger')            
+if len(selplayers)==0:
+    selplayers= ['Ideal Left Winger']
 #"""
 #with st.sidebar:
   
