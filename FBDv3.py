@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-#version 2 of the dashboard design with the inputs 8 th June
-=======
-#version 3 of the dashboard design with the inputs 13 th June
->>>>>>> ceafb1c76c7c9119434cefccc856172c3abf94cf
+
 #importing necesary libraires
 
 import streamlit as st 
@@ -421,7 +417,7 @@ except:
     t4=selplayers[0]
 #t4=tdf.iloc[0,1]
 #t5='TSP Score'
-#t6=psdf[psdf['Player']==selplayers[0]].iloc[0,5]
+t6=psdf[psdf['Player']==selplayers[0]].iloc[0,5]
 #st.write(t6)
 #top_row=['t'+str(i) for i in range(1,6)]
 #top_row=[t1,t2,t3,t4,t5,t6]
@@ -672,12 +668,6 @@ with col6:
     radar_fig1 = radar_chart1(df1)
     exp.plotly_chart(radar_fig1)
     
-#df=tactdf[func2]
-<<<<<<< HEAD
+#df=tactdf[fun
 
 #
-=======
-
-#
-
->>>>>>> ceafb1c76c7c9119434cefccc856172c3abf94cf
