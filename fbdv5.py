@@ -22,12 +22,16 @@ def data_load ( filename):
     return pd.ExcelFile(filename)
 
 #Data sources
-#Absolute path
-#"C:\Users\senth\Documents\GitHub\Pandas_practice\Data_Dashboard_Extended.xlsx"
+
 
 
 # Player data
 excel_file='Player Data2.xlsx'
+
+#Absolute path
+#"C:\Users\senth\Documents\GitHub\Pandas_practice\Data_Dashboard_Extended.xlsx"
+
+
 # Extended data list for subbar graphs
 file2='dd2.xlsx'
 
@@ -36,7 +40,9 @@ file2='dd2.xlsx'
 xl=data_load(excel_file)
 
 xlsheets=xl.sheet_names
+
 #Extracting the indiviual sheet to DF
+
 text_area_data = pd.read_excel(excel_file, sheet_name=xlsheets[0])
 circle_score_data = pd.read_excel(excel_file, sheet_name=xlsheets[1])
 radar_chart1_data = pd.read_excel(excel_file, sheet_name=xlsheets[2])
@@ -46,6 +52,7 @@ radar_chart4_data = pd.read_excel(excel_file, sheet_name=xlsheets[6])
 Mid_text_area_data = pd.read_excel(excel_file, sheet_name=xlsheets[4])
 
 # Converting the score from decimal to %
+
 Mid_text_area_data['TSP Score']=(
     Mid_text_area_data['TSP Score']*100).round(0).astype(int)
 
@@ -53,20 +60,26 @@ circle_score_data['TSP Score']=(
             circle_score_data['TSP Score']*100).round(0).astype(int)
 
 #Merging the data
+
 df=circle_score_data.merge(radar_chart1_data, how ='outer',on='Player')
 
 df=df.merge(radar_chart2_data, how ='outer',on='Player')
 df=df.merge(radar_chart3_data,how='outer',on='Player')
 df=df.merge(radar_chart4_data,how='outer',on='Player')
+
 col=df.columns
 
 # rounding  of the decimals to 2 places and sorting
+
 df[col[1:]]=df[col[1:]].round(2)
 df.sort_values(by=['TSP Score'],inplace=True,ascending=False)
 df=df.reset_index(drop=True)
 
-#creating a new column in df with player name and score to diaplay
+
+
+#creating a new column in df with player name and score to display
 #in sidebar mulitselect 
+
 df['player_list']=(
     df.apply(lambda row:
          row['Player'] +'-TSP Score-'+str(row['TSP Score']),axis=1))
@@ -75,16 +88,22 @@ df['player_list']=(
 player_list=df['player_list'].to_list()
  
 #Extended data set
+
 xl2=data_load(file2)
 xl2sheets=xl2.sheet_names
+
 #Loading of multiindex excel data
+
+
 techdf=pd.read_excel(file2,sheet_name=xl2sheets[0],
                     header=[0,1])
 tactdf=pd.read_excel(file2,sheet_name=xl2sheets[1],
                     header=[0,1])
+
+
 #methods to get the column value of multi index data frame
 #techcol=techdf.columns.get_level_values # Not required
-#c=tactdf.columns.get_level_values(1) # Not required
+
 
 # Assigning the player column , the frist column of the df to index and converting the tuple in index to values
 
@@ -96,14 +115,15 @@ tactdf.set_index('Unnamed: 0_level_0', inplace=True)
 
 tactdf.index=tactdf.index.map(lambda x :  x[0])
 tactdf=tactdf.round(0).astype(int)
-#st.write(tactdf.loc[:,'Pressing'].round(2))
-#st.writetac
+
+
+
 # Functions
 
 #code for radar chart
 
 def radar_chart1(df):
-    #st.write(df) #not required
+       
     categories=list(df.columns[1:])
 
     fig = go.Figure()
@@ -244,15 +264,11 @@ def comparison_bar_chart(series1, series2, name1,name2):
     return fig
 
 def multiPle_bar_chart(df,player):
-    #st.write(df)
-    selplayer=player
-    
-    #st.write(selplayers)
-
-    df=df.loc[selplayer]
-    c=list(df.columns)
+    barplayer=player
+    mpdf=df.loc[barplayer]
+    c=list(mpdf.columns)
     a=len(c)
-    b=len(selplayers)
+    b=len(barplayer)
     #st.write(a)
     #st.write(len(a))
     ab=a*b
@@ -270,9 +286,9 @@ def multiPle_bar_chart(df,player):
         h=3600
 
     fig = go.Figure()
-    for i in range((df.shape[0])):
-        series=df.iloc[i,1:]
-        name=selplayers[i]
+    for i in range((mpdf.shape[0])):
+        series=mpdf.iloc[i,1:]
+        name=barplayer[i]
         #name='Series'
         
 
@@ -283,10 +299,10 @@ def multiPle_bar_chart(df,player):
             name=name,
             orientation='h',
             text=list(series),
-            textposition='inside',
+            textposition='outside', #inside
             textangle=0,
             insidetextanchor='middle',
-            textfont={'size': 30},
+            textfont={'size': 15},
             #marker=dict(color='blue')  # Color for the first player
         ))
     fig.update_layout(
@@ -300,16 +316,8 @@ def multiPle_bar_chart(df,player):
     return fig
 
 
-#We are not using below code as we are not uisng AG grid 
-#{
-
-
 ##renaming the scores sheet for simplicity and extracting score of selected player
 dfcs=circle_score_data
-#circle_score = dfcs[(dfcs['Player']==selected_player)].iloc[0,1]
-#st.sidebar.plotly_chart(gauge(circle_score),height=100)
-#st.write(circle_score)
-#st.write(selected_player)
 
 #player selection df from the mid table area data
 psdf=Mid_text_area_data
@@ -323,102 +331,42 @@ psdf['Age']=psdf['Age'].astype(str)
 psdf1=psdf[['Player','TSP Score']]
 
 
-
-
-
-
-# code for AG grid display
-
-js_code = """
-function(e) {
-    const api = e.api;
-    const selectedRows = api.getSelectedRows();
-    if (selectedRows.length > 5) {
-        const rowToDeselect = selectedRows[5];
-        api.deselectNode(api.getRowNode(rowToDeselect.id));
-        alert('You can select a maximum of 5 rows.');
-    }
-}
-"""
-
-gd=GridOptionsBuilder.from_dataframe(psdf1)
-gd.configure_pagination(enabled=False)
-gd.configure_selection(selection_mode='multiple',use_checkbox=True)
-
-gd.configure_grid_options(onSelectionChanged=js_code)
-    
-#"""
-#with st.sidebar:
-  
-    
-#   stable=AgGrid(psdf1.drop(9), gridOptions=gd.build(),
-#                update_mode=GridUpdateMode.SELECTION_CHANGED,
-#                 height=300,
-#                   )
-# try used to by pass if there is no selection
-#st.write(stable['selected_rows'].shape)
-                
-#try:
-#    selp2=stable['selected_rows']
-    #s=list(selp2)
-    #s.extend(sleplayers)
-#    st.write(len(selp2))
-#    if len(selp2) > 5:
-#        selp2 = selp2[:5]
-        
-#    s = [row[0] for row in selp2]
-    # s.extend(selplayers)
-#    st.write(row)
-        
-    #st.sidebar.write(s)
-    #selplayers.insert(0,s)
-    #st.write(list(selplayers))
-    
-#except Exception as e:
-#    st.write("No selection or an error occurred: ", str(e))
-    
-#"""
-#}
-
-# Default player in the list to show the score when the page loads
-selplayers= ['Ideal Left Winger']
-
-#st.write(selplayerbar)
-
+#1
 
 # Dashboard screen starts here
+
 #"C:\Users\senth\Documents\GitHub\Pandas_practice\player_images\Sunderland..png"
-cols1, cols2=st.sidebar.columns([2,2])
-with cols1:
-    st.sidebar.image('player_images/Sunderland..png',width=100)
-#with cols2:
-    #st.sidebar.image('player_images/SmartScoutlogo.png',width=100)
+#columns option not working in side bar
+
+
+st.sidebar.image('player_images/Sunderland..png',width=100)
+
 st.sidebar.title('Choose your player  '+'   :soccer:')
 try:
     selplayerbar =st.sidebar.multiselect(label='Select players',
             options=player_list[1:],label_visibility='hidden',
             max_selections=5
             )
-    selplayerbar.append(df['player_list'][0])
-    selplayerdf=df[df['player_list'].isin(selplayerbar)]
     
     
-    selplayers=selplayerdf['Player'].tolist()
     
 except:
-    #selplayerbar=['Ideal Left Winger']
-    #selplayerbar=df['player_list'][0]
+    
     pass
-# Log of the firm
+
+selplayerbar.append(df['player_list'][0]) # adding Ideal player  as  default in the selection for radar charts
+selplayerdf=df[df['player_list'].isin(selplayerbar)]
+
+selplayers=selplayerdf['Player'].tolist()
+
+
+# Logo of the firm
 st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
 
-# filtering the df with selected players
-# if len(selplayerbar) == 0:
 
 
-#selplayerbar.append(df['player_list'][0])
-
-sp_details=df[df['player_list'].isin(selplayerbar)]
+#sp_details=df[df['player_list'].isin(selplayerbar)]# need to be removed 
+sp_details=selplayerdf
 
 #text area starts here
 
@@ -426,17 +374,15 @@ tdf=text_area_data
 t1=tdf.columns[0] 
 t2=tdf.iloc[0,0]
 t3=tdf.columns[1]
-try:
+if len(selplayers)>1 :
+    t4=selplayers[1]
+else:
     t4=selplayers[0]
-    #t4.append('Ideal Left Winger')
-except:
-    selplayers=['Ideal Left Winger']
-    t4=selplayers[0]
-#t4=tdf.iloc[0,1]
+
+
 #t5='TSP Score'
-t6=psdf[psdf['Player']==selplayers[0]].iloc[0,5]
-#st.write(t6)
-#top_row=['t'+str(i) for i in range(1,6)]
+#t6=psdf[psdf['Player']==selplayers[0]].iloc[0,5]
+t6=psdf[psdf['Player']==t4].iloc[0,5]
 #top_row=[t1,t2,t3,t4,t5,t6]
 top_row=[t1,t2,t3,t4]
 
@@ -545,20 +491,22 @@ with col2:
 #player Score circle plot    
 with col3:
     #st.write(selplayers[0])
-    fig2=gauge(t6,selplayers[0])
+    fig2=gauge(t6,t4)
     st.plotly_chart(fig2)
     
 #code for the image diaplay
 
 if   (len(selplayers) >1):
-    l=len(selplayers)-1
+    display_players=selplayers[1:]
+    l=len(display_players)
     pic_cols=['col1','col2','col3','col4','col5']
     pic_cols[:l]=st1.columns(l)
-    for i in range(len(selplayers[:-1])):    
-        pl_filename=selplayers[i+1].replace(' ','_')
+    for i in range(l):
+      
+        pl_filename=display_players[i].replace(' ','_')       
         player_img1='player_images/'+pl_filename+'.png'        
         pic_cols[i].image(player_img1,width=100)
-        pic_cols[i].write(selplayers[i])
+        pic_cols[i].write(display_players[i])
 
 
     # 'for' block is for the alignment of the image
@@ -597,10 +545,10 @@ col3, col4 = st.columns(2)
 
 
 with col3:
-    #st.subheader('Chart-1')
-    df1=sp_details.iloc[:,:8]
-    df1.drop('TSP Score',axis=1,inplace=True)
-    radar_fig1 = radar_chart1(df1)
+    #st.subheader('radar Chart-1')
+    radardf1=sp_details.iloc[:,:8]
+    radardf1.drop('TSP Score',axis=1,inplace=True)
+    radar_fig1 = radar_chart1(radardf1)
     exp=st.expander(label='Overall Attributes',expanded=False)
     config ={'displaymode': False}
     exp.plotly_chart(radar_fig1,config=config)
@@ -608,31 +556,33 @@ with col3:
     
     
 with col4:
-    #st.subheader('Chart-2')
-    df1=sp_details.iloc[:,23:]
+    #st.subheader('radar Chart-2')
+    radardf2=sp_details.iloc[:,23:]
     l=list(sp_details.iloc[:,0])
-    df1.insert(loc=0,column='Players',value=l)
+    radardf2.insert(loc=0,column='Players',value=l)
     exp=st.expander(label='Psychological Attributes',expanded=False)
-    radar_fig1 = radar_chart1(df1)
-    exp.plotly_chart(radar_fig1)
+    radar_fig2 = radar_chart1(radardf2)
+    exp.plotly_chart(radar_fig2)
     
 col5, col6= st.columns(2)
 
 with col5:
-    #st.subheader('Chart-3')
+    #st.subheader('radar Chart-3')
     exp=st.expander(label='Technical Attributes',expanded=False)
     colsp=sp_details.columns[8:17]
     colsp=colsp.insert(0,sp_details.columns[0])
-    df=sp_details[colsp]
+    radardf3=sp_details[colsp]
     
     #df=sp_details.iloc[:,8:17]
-    df.columns=df.columns.str.title()
-    radio_options=list(df.columns[1:])
+    radardf3.columns=radardf3.columns.str.title()
+    radio_options=list(radardf3.columns[1:])
     
-    radar_fig1 = radar_chart1(df)
-    exp.plotly_chart(radar_fig1,config=config)
+    radar_fig3 = radar_chart1(radardf3)
+    exp.plotly_chart(radar_fig3,config=config)
 #if not selplayers[0]=='Ideal Left Winger' :
 if len(selplayers) >1 :
+    bar1players=selplayers[1:]
+    
     expr1=st.expander(label=' More on Technical Attributes ',expanded=False)
     func1=expr1.radio(label='a', options=radio_options,
             label_visibility='hidden',
@@ -640,23 +590,14 @@ if len(selplayers) >1 :
             index=None )
     if func1 in radio_options :
         
-        if not 'Jack Clarke' in selplayers:
-            selplayers[0]='Jack Clarke'
-        else:
-            selplayers=selplayers[1:]
+        if not 'Jack Clarke' in bar1players:
+            bar1players.append('Jack Clarke')
+             
+        techdf1=techdf.loc[bar1players][func1]
         
-            
-            #selplayers.insert(0,'Jack Clarke')
-        
-        #df1=techdf.loc[selplayers[:-1]][func1]
-        df1=techdf.loc[selplayers][func1]
-        
-        #series2=techdf.loc['Jack Clarke'][func1]
-        #bar_data=techdf.loc[selplayers[0]][func1]
         exp3=st.expander(label='Bar chart',expanded=True)
-        #exp3.plotly_chart(bar_chart((bar_data),func1))
-        #exp3.plotly_chart(comparison_bar_chart(series1,series2,selplayers[0],'Jack Clarke'))
-        exp3.plotly_chart(multiPle_bar_chart(df1,selplayers))
+        
+        exp3.plotly_chart(multiPle_bar_chart(techdf1,bar1players))
         pass
 with col6:
     #st.subheader('Chart-4')
@@ -664,17 +605,17 @@ with col6:
     
     colsp=sp_details.columns[17:23]
     colsp=colsp.insert(0,sp_details.columns[0])
-    df=sp_details[colsp]
-    radio2_options=list(df.columns)[1:]
-    #radio2_options=[x[:4] for x in radio2_options]
-    #radar_fig1 = radar_chart1(df)
-    #st.plotly_chart(radar_fig1)
+    radardf4=sp_details[colsp]
+    radio2_options=list(radardf4.columns)[1:]
+    
     exp=st.expander(label='Tactical Attributes',expanded=False)
-    radar_fig1 = radar_chart1(df)
-    exp.plotly_chart(radar_fig1)
+    radar_fig4 = radar_chart1(radardf4)
+    exp.plotly_chart(radar_fig4)
     
 #if not selplayers[0]=='Ideal Left Winger' :
 if len(selplayers) >1 :
+    bar2players=selplayers[1:]
+    
     expr1=st.expander(label=' More on Tactical Attributes ',expanded=False)
     func2=expr1.radio(label='a', options=radio2_options,
             label_visibility='hidden',
@@ -684,20 +625,68 @@ if len(selplayers) >1 :
         
         if func2=='Team-Work':
             func2='Team-Work '
-        #bardf=tactdf[tactdf[]]
-        #series1=tactdf.loc[selplayers[0]][func2].round(2)
-        #series2=tactdf.loc['Jack Clarke'][func2].round(2)
-        if not 'Jack Clarke' in selplayers:
-            selplayers.insert(0,'Jack Clarke')
-        df=tactdf[func2].loc[selplayers]    
-        #bar_data=tactdf.loc[selplayers[0]][func2]
-        #st.write(df)
+        
+        if not 'Jack Clarke' in bar2players:
+            
+            bar2players.append('Jack Clarke')
+        
+        #selplayers=selplayers[1:]
+        
+        tactdf1=tactdf[func2].loc[bar2players]    
+        
         exp3=st.expander(label='Bar chart',expanded=True)
-        #exp3.plotly_chart(bar_chart((bar_data),func2))
-        #exp3.plotly_chart(multiPle_bar_chart(df,selplayers))
-        #exp3.plotly_chart(comparison_bar_chart(series1,series2,selplayers[0],'Jack Clarke'))
-        exp3.plotly_chart(multiPle_bar_chart(df,selplayers))
+        
+        exp3.plotly_chart(multiPle_bar_chart(tactdf1,bar2players))
     else:
-        pass          
+        pass  
+    
+#if  (len(selplayers) ==3):
+        
+#        st.write(tactdf1)
+ 
+#code for counter starts here
+
+
+try:
+    if  (len(display_players) ==2):
+        #creating a newdf for comapriaosn with only players visible in the image section
+        tactdfcomp=tactdf[func2].loc[display_players]
+        tactdfcomp.reset_index(inplace=True)
+        
+        cl=list(tactdfcomp.columns)
+        cl[0]='Players'
+        
+        tactdfcomp.columns=cl
+        tactdfcomp.set_index('Players',inplace=True)
+        
+        #finding differences
+        l=tactdfcomp.diff(axis=0)
+        
+        similar=[]
+        first=[]
+        second=[]
+        
+        
+        for i in l.columns:
+            
+            val=l[i][1]
+            if abs(val) <=10:
+                similar.append(i)
+            elif val < -10:
+                first.append(i)
+            else:
+                second.append(i)
+                         
+    st.subheader('Similar Attributes')
+    similardf=tactdfcomp[similar]
+    st.write(similardf.T)
+    first_player=list(tactdfcomp.index)[0]
+    st.subheader(first_player +' Won')
+    st.write(tactdfcomp[first].T)
+    st.write(tactdfcomp[second].T)
 
     
+            
+except:
+    pass
+

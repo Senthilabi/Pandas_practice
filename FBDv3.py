@@ -201,7 +201,7 @@ def comparison_bar_chart(series1, series2, name1,name2):
         name=name1,
         orientation='h',
         text=list(series1),
-        textposition='inside',
+        textposition=inside,
         textangle=0,
         insidetextanchor='middle',
         textfont={'size': 30},
@@ -273,9 +273,9 @@ def multiPle_bar_chart(df,player):
             name=name,
             orientation='h',
             text=list(series),
-            textposition='inside',
+            textposition='outside',
             textangle=0,
-            insidetextanchor='middle',
+            insidetextanchor='outside',
             textfont={'size': 30},
             #marker=dict(color='blue')  # Color for the first player
         ))
@@ -517,7 +517,7 @@ col1 ,col2, col3 =st1.columns([3,1,1])
 #top dahsboard chart
 with col1:
        st.plotly_chart(fig,config=config)
-#player image
+#smarts cout image
 with col2:
     for i in range(6):
             st.write(' ')
