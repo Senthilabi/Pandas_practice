@@ -308,10 +308,10 @@ def multiPle_bar_chart(df,player):
 
         # Add trace for the first player
         fig.add_trace(go.Bar(
-            y=series.index,
-            x=list(series),
+            x=series.index,
+            y=list(series),
             name=name,
-            orientation='h',
+            #orientation='h',
             text=list(series),
             textposition='outside', #inside
             textangle=0,
@@ -321,13 +321,22 @@ def multiPle_bar_chart(df,player):
         ))
     fig.update_layout(
         barmode='group',  # Use 'group' mode to place bars side-by-side
-        height=h,
-        bargap=0.1,bargroupgap=.3,
+        height=500,
+        bargap=0.05,bargroupgap=.01,
         #height=lambda x:1800 if len(list(series2)) > 10 else 600,
         title='Player Comparison',
         xaxis=dict(title='Value'),
         yaxis=dict(title='Attributes'),
-        font=dict(size=30,color='Rebecca Purple')
+        font=dict(size=30,color='Rebecca Purple'),
+                 
+                 
+                 
+        legend=dict(
+        orientation='h',  
+        yanchor="bottom",
+        y=1.05,
+        xanchor="left",
+        x=0.001)
     )
     return fig
 
