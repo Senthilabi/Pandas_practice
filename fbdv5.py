@@ -186,7 +186,12 @@ def gauge(circle_score,text):
     value=circle_score,
     #commenting the text to remove diaplay of player name
     #title={'text': text+" TSP ",},
-    title={'text': " TSP ",},       
+    #title={'text': " TSP Score ",},   
+    title={'text':'TSP Score ',
+            'font': {
+            'family': "Courier New, monospace",
+            'size': 30,
+            'color': "RebeccaPurple"}},
     gauge={
         'axis': {'range': [None, 100]},
         'bar': {'color': "black"},
