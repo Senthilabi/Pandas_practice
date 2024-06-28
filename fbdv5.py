@@ -10,9 +10,14 @@ from st_aggrid import AgGrid ,GridUpdateMode,JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder 
 
 #Setting the layout
-
-st.set_page_config(page_title='Player DashBoard',page_icon=':soccer:',
+st.set_page_config(page_title='Profile Details',page_icon=':soccer:',
                      layout="wide")
+
+
+with open('style.css') as f:
+      st.markdown(f'<style> {f.read()}</style>', unsafe_allow_html=True)
+
+
 
 
 
@@ -84,7 +89,7 @@ df['player_list']=(
     df.apply(lambda row:
          row['Player'] +'-TSP Score-'+str(row['TSP Score']),axis=1))
 
-
+# Crreating a list with player name and TSP Score to displayb it in the side bar
 player_list=df['player_list'].to_list()
  
 #Extended data set
@@ -161,7 +166,14 @@ def radar_chart1(df):
         ),
       ),
       
-      showlegend=True
+      showlegend=True,
+      legend=dict(
+        orientation='h',  
+        yanchor="bottom",
+        y=1.1,
+        xanchor="left",
+        x=0.001)
+          
     )
 
     return  fig
@@ -208,13 +220,15 @@ def bar_chart(series,name):
         text=list(series),
         textposition='inside',textangle=0,
         insidetextanchor='middle',
-        textfont={'size':400},
+        textfont={'size':40},
 
     ))
     fig.update_layout(
+
         barmode='stack',
         width=1200,
-        height=1200, ) #[lambda x:1800 if len(x) > 10 else 600],)
+        height=1200, 
+        font=dict(size=40)), #[lambda x:1800 if len(x) > 10 else 600],)
         
     
         #text=list(series))
@@ -308,11 +322,86 @@ def multiPle_bar_chart(df,player):
     fig.update_layout(
         barmode='group',  # Use 'group' mode to place bars side-by-side
         height=h,
+        bargap=0.1,bargroupgap=.3,
         #height=lambda x:1800 if len(list(series2)) > 10 else 600,
         title='Player Comparison',
         xaxis=dict(title='Value'),
-        yaxis=dict(title='Attributes')
+        yaxis=dict(title='Attributes'),
+        font=dict(size=30,color='Rebecca Purple')
     )
+    return fig
+
+def table_plot(df,title=None,height=150,width=500,heading_color='black',row_color='lightblue') :
+    height= 200+50*(df.shape[0])
+    cell_text=df.values.tolist()
+    col_width= round(100/df.shape[1],2)
+    col_header=df.columns.tolist()
+    cell_text.insert(0,col_header)
+    cell_text=list(reversed(cell_text))
+    rows=len(cell_text)
+    fig = go.Figure()
+    config ={'displayModeBar': False}
+    config ={'staticplot': True}
+    for row in range(rows):
+        get_color= lambda row : heading_color if row ==(rows-1) else row_color
+        for text in cell_text[row]:
+            
+            fig.add_trace(go.Bar
+                         (
+                         #y=list(range(rows)),
+                         y=[row] ,  
+                         x=[col_width],
+                         name=text,
+                         orientation='h',
+                             
+                    
+                         text=f'{text}',
+                         textposition='inside',
+                         textangle=0,
+                         insidetextanchor='middle',
+                         marker_line_width=1,
+                         marker=dict(color=get_color(row)),   
+                         hoverinfo='none'
+
+
+                         ) )
+    # Update layout
+    fig.update_layout(
+        width=width,
+        height=height,
+        title={'text':title,
+                'font': {
+                'family': "Courier New, monospace",
+                'size': 20,
+                'color': "RebeccaPurple"}
+
+        },
+        #xaxis_title='Percentage',
+        #yaxis_title='',
+        barmode='stack',
+        bargap=0.,bargroupgap=0.1,
+        xaxis=dict(range=[0, 100]),  # Ensure the x-axis ranges from 0 to 100
+        showlegend=False,
+
+    )
+    fig.update_xaxes(showticklabels=False,linecolor='white')
+    fig.update_yaxes(showline=False, showticklabels=False,linecolor='white')
+    return fig
+
+#fig.update_layout(barmode='group', bargap=0.30,bargroupgap=0.0)
+
+def display_label(name,height=300,width=300,thick=3):
+    fig = go.Figure()
+    config ={'staticplot': True}
+    config ={'displayModeBar': False}
+    fig.add_traces(go.Bar(x=[1],y=[1],orientation='h',text=name,insidetextanchor='middle',marker_line_width=thick, 
+                         textposition='inside',textangle=0,hoverinfo='none'))
+    fig.update_layout(width=width,height=height,barmode='stack')
+    #        xaxis=dict(range=[0, 100]))
+    fig.update_xaxes(showticklabels=False,linecolor='white')
+    fig.update_yaxes(showline=False, showticklabels=False,linecolor='white')
+    config ={'displayModeBar': False}
+
     return fig
 
 
@@ -355,17 +444,16 @@ except:
     pass
 
 selplayerbar.append(df['player_list'][0]) # adding Ideal player  as  default in the selection for radar charts
-selplayerdf=df[df['player_list'].isin(selplayerbar)]
+#slicing the df to have only the details of selected players
+selplayerdf=df[df['player_list'].isin(selplayerbar)] # Player_list is a combination of playername and Tsp score
 
 selplayers=selplayerdf['Player'].tolist()
 
 
 # Logo of the firm
-st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
+#st.sidebar.image('player_images/SmartScoutlogo.png',width=200)
 
 
-
-#sp_details=df[df['player_list'].isin(selplayerbar)]# need to be removed 
 sp_details=selplayerdf
 
 #text area starts here
@@ -449,14 +537,15 @@ for i, bar_values in zip(range(5), normalized_values):
             #textfont_size=30,
             insidetextanchor='middle',  # Center-align the text inside the bars
             marker=dict(color=color),  # Set the color for each segment
+            marker_line_width=1,
             hoverinfo='none'
         ))
 
 # Update layout
 fig.update_layout(
-    width=800,
-    height=300,
-    title={'text':'Players Dashboard ',
+    width=700,
+    height=350,
+    title={'text':'Profile Details ',
             'font': {
             'family': "Courier New, monospace",
             'size': 30,
@@ -476,16 +565,18 @@ config ={'displayModeBar': False}
 
 # Display the chart
 st1=st.expander(label='',expanded=True)
-col1 ,col2, col3 =st1.columns([3,1,1])
+#col1 ,col2, col3 =st1.columns([3,1,1])
+col1,col3=st1.columns([4,1])
 #top dahsboard chart
 with col1:
+
        st.plotly_chart(fig,config=config)
 #player image
-with col2:
-    for i in range(6):
-            st.write(' ')
-        
-    st.image('player_images/SmartScoutlogo.png',width=150)
+#with col2:
+#    for i in range(6):
+#            st.write(' ')
+#        
+#    st.image('player_images/SmartScoutlogo.png',width=150)
 
         
 #player Score circle plot    
@@ -494,24 +585,93 @@ with col3:
     fig2=gauge(t6,t4)
     st.plotly_chart(fig2)
     
-#code for the image diaplay
+#code for the image display
 
 if   (len(selplayers) >1):
     display_players=selplayers[1:]
     l=len(display_players)
     pic_cols=['col1','col2','col3','col4','col5']
     pic_cols[:l]=st1.columns(l)
+    if l==1:
+        pic_cols[:2]=st1.columns([1,3]) 
+    if l==2:
+        
+        pic_cols[:3]=st1.columns([1,1,2])
+        
+    #code for concating the player name with file extension to retireive the file from the image folder
     for i in range(l):
       
         pl_filename=display_players[i].replace(' ','_')       
         player_img1='player_images/'+pl_filename+'.png'        
         pic_cols[i].image(player_img1,width=100)
-        pic_cols[i].write(display_players[i])
-
-
-    # 'for' block is for the alignment of the image
+        pic_cols[i].subheader(display_players[i])
+    if l==2:
+        calldf=sp_details.iloc[:,8:-1]
+        calldf=calldf.drop(0)
+        calldf=calldf.reset_index()
         
+        
+        #finding differences
+        call=calldf.diff(axis=0)
+        
+        allsimilar=[]
+        allfirst=[]
+        allsecond=[]
+        
+        
+        
+        for i in call.columns:
+            
+            val=(call[i])[1]
+            if abs(val) <= 10:
+                allsimilar.append(i)
+            elif val < -10:
+                allfirst.append(i)
+            else:
+                allsecond.append(i)
+        #calldict={'Players':display_players}
+        
+        #st.write(call)
+        sim=len(allsimilar)
+        pl_f=len(allfirst)
+        pl_s=len(allsecond)
+        pl_f_points=sim*2+pl_f*5
+        pl_s_points=sim*2+pl_s*5
+        calldict={}
+        calldict[display_players[0]]=[pl_f_points,pl_f,sim,pl_s,]
+        calldict[display_players[1]]=[pl_s_points,pl_s,sim,pl_f]
+        dfcomptop=pd.DataFrame(calldict,index=['Points','Won','Draw','Lost',]).T
+        dfcomptop.reset_index(inplace=True)
+        dfcomptop.rename({'index':'Players'},axis=1, inplace=True)
+        #st.write(list(dfcomptop.columns))
+        
+        #pic_cols[2].table(pd.DataFrame(calldict,index=['Points','Won','Draw','Lost',]).T)
+        pic_cols[2].plotly_chart(table_plot(dfcomptop,title='Attribute Comparison'))
+
+
     
+    
+    
+#details for counter chart        
+#radardf1=sp_details.iloc[:,:8]
+calldf=sp_details.iloc[:,8:-1]
+calldf=calldf.drop(0)
+#calldf.columns=map(str.title,calldf.columns)
+#st.write(calldf)
+cpsychdf=sp_details.iloc[:,23:-1]
+#Dropping the Ideal player
+cpsychdf=cpsychdf.drop(0)
+ctechdf=sp_details.iloc[:,8:17]
+
+ctechdf=ctechdf.drop(0)
+ctechdf.columns=map(str.title,ctechdf.columns)
+
+ctactdf=sp_details.iloc[:,17:23]
+ctactdf=ctactdf.drop(0)
+
+#st.write(cpsychdf)
+#st.write(ctechdf)
+#st.write(ctactdf)
 
 # Third Row
 #psdf
@@ -526,7 +686,14 @@ midtab.set_index('Player',inplace =True)
 midtab['Age']=midtab['Age'].apply(lambda x: x.split('.')[0])
 
 if not midtab.shape[0]==1 :
-    st.write(midtab.iloc[:-1])
+    mid_table=midtab.iloc[:-1]
+    mid_table= mid_table.reset_index()
+    st.plotly_chart(table_plot(mid_table, width=1200, title='Player Profile'))
+    #st.write(midtab.iloc[:-1])
+       
+    
+    
+    
 #styled_df=midtab.iloc[0:5].style.set_table_styles(
 #    [{'selector': 'th', 'props': [('background-color', 'lightgrey')]},
 #    {'selector': 'table', 'props': [('width', '200%')]}]
@@ -557,7 +724,7 @@ with col3:
     
 with col4:
     #st.subheader('radar Chart-2')
-    radardf2=sp_details.iloc[:,23:]
+    radardf2=sp_details.iloc[:,23:-1]
     l=list(sp_details.iloc[:,0])
     radardf2.insert(loc=0,column='Players',value=l)
     exp=st.expander(label='Psychological Attributes',expanded=False)
@@ -569,9 +736,9 @@ col5, col6= st.columns(2)
 with col5:
     #st.subheader('radar Chart-3')
     exp=st.expander(label='Technical Attributes',expanded=False)
-    colsp=sp_details.columns[8:17]
-    colsp=colsp.insert(0,sp_details.columns[0])
-    radardf3=sp_details[colsp]
+    colsp1=sp_details.columns[8:17]
+    colsp1=colsp1.insert(0,sp_details.columns[0])
+    radardf3=sp_details[colsp1]
     
     #df=sp_details.iloc[:,8:17]
     radardf3.columns=radardf3.columns.str.title()
@@ -603,9 +770,9 @@ with col6:
     #st.subheader('Chart-4')
     #df=sp_details.iloc[:,17:23]
     
-    colsp=sp_details.columns[17:23]
-    colsp=colsp.insert(0,sp_details.columns[0])
-    radardf4=sp_details[colsp]
+    colsp2=sp_details.columns[17:23]
+    colsp2=colsp2.insert(0,sp_details.columns[0])
+    radardf4=sp_details[colsp2]
     radio2_options=list(radardf4.columns)[1:]
     
     exp=st.expander(label='Tactical Attributes',expanded=False)
@@ -650,6 +817,70 @@ if len(selplayers) >1 :
 try:
     if  (len(display_players) ==2):
         #creating a newdf for comapriaosn with only players visible in the image section
+        techdfcomp=techdf[func1].loc[display_players]
+        techdfcomp.reset_index(inplace=True)
+         
+        
+        cltech=list(techdfcomp.columns)
+        cltech[0]='Players'
+        
+        techdfcomp.columns=cltech
+        techdfcomp.set_index('Players',inplace=True)
+        
+        #finding differences
+        ltech=techdfcomp.diff(axis=0)
+        
+        
+        similar1=[]
+        first1=[]
+        second1=[]
+        
+        
+        for i_t in ltech.columns:
+            
+            val=ltech[i_t][1]
+            if abs(val) <=10:
+                similar1.append(i_t)
+            elif val < -10:
+                first1.append(i_t)
+            else:
+                second1.append(i_t)
+        st.sidebar.subheader('Comparison on '+ func1) 
+            
+        similartechdf=techdfcomp[similar1]
+    
+        first_player1=list(techdfcomp.index)[0]
+        second_player1=list(techdfcomp.index)[1]
+        
+        #comparison_dict2 ={'Similar Attributes':similartechdf.shape[1],(first_player1 +' Won') :techdfcomp[first1].shape[1],
+        #                 (second_player1 +' Won'):techdfcomp[second1].shape[1]} 
+
+#comparison_dict2 ={'Similar Attributes':similartechdf.shape[1],(first_player1 +' Won') :techdfcomp[first1].shape[1],
+#                     (second_player +' Won'):techdfcomp[second1].shape[1]} 
+#comparison_dict
+        
+        points_first1=techdfcomp[first1].shape[1]*5+similartechdf.shape[1]*2
+        points_second1=techdfcomp[second1].shape[1]*5+similartechdf.shape[1]*2
+        comparison_dict2={'Players':[first_player1,second_player1],'Points':[points_first1,points_second1],
+                          'Won':[techdfcomp[first1].shape[1],techdfcomp[second1].shape[1]],
+                          'Draws':[similartechdf.shape[1],similartechdf.shape[1]],
+                          'Loss':[techdfcomp[second1].shape[1],techdfcomp[first1].shape[1]]}
+        compsidedf2=pd.DataFrame(comparison_dict2, columns=comparison_dict2.keys())#,index=[func1])
+        compsidedf2.set_index('Players',inplace=True)
+
+        st.sidebar.table(compsidedf2) 
+ 
+                                                                        
+
+    
+            
+except:
+    pass
+
+
+try:
+    if  (len(display_players) ==2):
+        #creating a newdf for comapriaosn with only players visible in the image section
         tactdfcomp=tactdf[func2].loc[display_players]
         tactdfcomp.reset_index(inplace=True)
         
@@ -676,17 +907,51 @@ try:
                 first.append(i)
             else:
                 second.append(i)
-                         
-    st.subheader('Similar Attributes')
-    similardf=tactdfcomp[similar]
-    st.write(similardf.T)
-    first_player=list(tactdfcomp.index)[0]
-    st.subheader(first_player +' Won')
-    st.write(tactdfcomp[first].T)
-    st.write(tactdfcomp[second].T)
+        st.sidebar.subheader('Comparison on '+ func2) 
+       # comparison_dict ={'Similar Attributes':similardf.shape[1],(first_player +' Won') :tactdfcomp[first].shape[1]
+                         # (second_player +' Won'):tactdfcomp[second].shape[1}
+        #st.sidebar.subheader('Similar Attributes')
+        similartactdf=tactdfcomp[similar]
+        #st.sidebar.write(similardf.shape[1])
+        first_player=list(tactdfcomp.index)[0]
+        #st.sidebar.subheader(first_player +' Won')
+        #st.sidebar.write(tactdfcomp[first].shape[1])
+        second_player=list(tactdfcomp.index)[1]
+        #st.sidebar.subheader(second_player +' Won')
+        #st.sidebar.write(tactdfcomp[second].shape[1])
+        #comparison_dict ={'Similar Attributes':similardf.shape[1],(first_player +' Won') :tactdfcomp[first].shape[1],
+                          #(second_player +' Won'):tactdfcomp[second].shape[1]} 
+        #compsidedf=pd.DataFrame(comparison_dict, columns=comparison_dict.keys)
+
+        #comparison_dict ={'Similar Attributes':similartactdf.shape[1],(first_player +' Won') :tactdfcomp[first].shape[1],
+                         #(second_player +' Won'):tactdfcomp[second].shape[1]} 
+        #comparison_dict
+
+        #compsidedf=pd.DataFrame(comparison_dict, columns=comparison_dict.keys(),index=[func2])
+        #st.sidebar.write(compsidedf.T)
+        #st.sidebar.write(compsidedf.T)
+        points_first=tactdfcomp[first].shape[1]*5+similartactdf.shape[1]*2
+        points_second=tactdfcomp[second].shape[1]*5+similartactdf.shape[1]*2
+        comparison_dict={'Players':[first_player,second_player],'Points':[points_first,points_second],
+                          'Won':[tactdfcomp[first].shape[1],tactdfcomp[second].shape[1]],
+                          'Draws':[similartactdf.shape[1],similartactdf.shape[1]],
+                          'Loss':[tactdfcomp[second].shape[1],tactdfcomp[first].shape[1]]}
+        compsidedf=pd.DataFrame(comparison_dict, columns=comparison_dict.keys())#,index=[func1])
+        compsidedf.set_index('Players',inplace=True)
+
+        st.sidebar.table(compsidedf) 
+
+
+            
+except:
+    pass
+try:
+    
 
     
-            
+
+    bothcompdf=compsidedf2.T.merge(compsidedf.T , left_index=True, right_index=True)
+    #st.sidebar.write(bothcompdf)
 except:
     pass
 
