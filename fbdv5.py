@@ -190,7 +190,7 @@ def gauge(circle_score,text):
     title={'text':'TSP Score ',
             'font': {
             'family': "Courier New, monospace",
-            'size': 30,
+            'size': 25,
             'color': "RebeccaPurple"}},
     gauge={
         'axis': {'range': [None, 100]},
