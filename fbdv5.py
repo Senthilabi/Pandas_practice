@@ -644,8 +644,8 @@ if   (len(selplayers) >1):
         sim=len(allsimilar)
         pl_f=len(allfirst)
         pl_s=len(allsecond)
-        pl_f_points=sim*2+pl_f*5
-        pl_s_points=sim*2+pl_s*5
+        pl_f_points=sim*1+pl_f*3
+        pl_s_points=sim*1+pl_s*3
         calldict={}
         calldict[display_players[0]]=[pl_f_points,pl_f,sim,pl_s,]
         calldict[display_players[1]]=[pl_s_points,pl_s,sim,pl_f]
@@ -868,8 +868,8 @@ try:
 #                     (second_player +' Won'):techdfcomp[second1].shape[1]} 
 #comparison_dict
         
-        points_first1=techdfcomp[first1].shape[1]*5+similartechdf.shape[1]*2
-        points_second1=techdfcomp[second1].shape[1]*5+similartechdf.shape[1]*2
+        points_first1=techdfcomp[first1].shape[1]*3+similartechdf.shape[1]*1
+        points_second1=techdfcomp[second1].shape[1]*3+similartechdf.shape[1]*1
         comparison_dict2={'Players':[first_player1,second_player1],'Points':[points_first1,points_second1],
                           'Won':[techdfcomp[first1].shape[1],techdfcomp[second1].shape[1]],
                           'Draws':[similartechdf.shape[1],similartechdf.shape[1]],
@@ -939,8 +939,8 @@ try:
         #compsidedf=pd.DataFrame(comparison_dict, columns=comparison_dict.keys(),index=[func2])
         #st.sidebar.write(compsidedf.T)
         #st.sidebar.write(compsidedf.T)
-        points_first=tactdfcomp[first].shape[1]*5+similartactdf.shape[1]*2
-        points_second=tactdfcomp[second].shape[1]*5+similartactdf.shape[1]*2
+        points_first=tactdfcomp[first].shape[1]*3+similartactdf.shape[1]*1
+        points_second=tactdfcomp[second].shape[1]*3+similartactdf.shape[1]*1
         comparison_dict={'Players':[first_player,second_player],'Points':[points_first,points_second],
                           'Won':[tactdfcomp[first].shape[1],tactdfcomp[second].shape[1]],
                           'Draws':[similartactdf.shape[1],similartactdf.shape[1]],
